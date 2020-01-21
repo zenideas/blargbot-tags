@@ -57,9 +57,9 @@ CREATING FUNCTIONS FOR CALLING HELPS
 {//;function to show warlog help}
 {func;warlog;
   {embed;{buildembed;
-    title:SHOULD I NEED TO KEEP WAR LOG PUBLIC?;
+    title:DO I NEED TO KEEP WAR LOG PUBLIC?;
     description:
-    ➜ To use war related features you need to keep your War Log `Public`.
+    ➜ To use war related features you must keep your War Log `Public`.
 
     ➜ There is no way to get war-feed with a closed War Log.
 
@@ -81,7 +81,7 @@ CREATING FUNCTIONS FOR CALLING HELPS
   {embed;{buildembed;
     title:WILL SIDEKICK SHOW UPGRADE INFO ABOUT BUILDINGS;
     description:
-There is no way for sidekick to tell which buildings a user is yet to upgrade. Supercell doesn't provide this info through its API. 
+There is no way for Sidekick to tell which buildings a user is yet to upgrade. Supercell doesn't provide this info through its API. 
 Supercell only provides info about what are left to upgrade for heroes, troops and spells.;
     fields.name:Will SK ever show the upgrade info for Buildings?;
     fields.value:Not until Supercell make this info available through its API;
