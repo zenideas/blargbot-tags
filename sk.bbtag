@@ -1,12 +1,4 @@
 {set;prefix;{if;{prefix};==;" ";;{prefix}}{if;{logic;!;{iscc}};t{space}}{commandname}}
-{set;feedFree;24 hours}
-{set;warfeedFree;30-60 minutes}
-{set;feedFasterSk;6 hours}
-{set;warfeedFasterSk;15 minutes}
-{set;feedSk2;15 minnutes}
-{set;warfeedSk2;8 minutes}
-
-
 
 {//;
 =============================
@@ -19,20 +11,17 @@ CREATING FUNCTIONS FOR CALLING HELPS
   {embed;{buildembed;
     title:CURRENTLY AVAILABLE CUSTOM CMDS;
     description:
-    ✦ {get;prefix} [patreon | pat] ➜ `patreon related help`
-    ✦ {get;prefix} [warlog | wl] ➜ `warlog`
-    ✦ {get;prefix} [lootcap | lc] ➜ `lootcap`
     ✦ {get;prefix} [permissions | perms | p] ➜ `permissions required`
-    ✦ {get;prefix} [rewards | r] ➜ `rewards of using sk`
-    ✦ {get;prefix} [cycle | c] ➜ `feed posting cycle of sk`
-    ✦ {get;prefix} [feed | f] ➜ `setup feed channels`
+    ✦ {get;prefix} [lootcap | lc] ➜ `lootcap`
+    ✦ {get;prefix} [warlog | wl] ➜ `warlog`
     ✦ {get;prefix} [upgrade | up | u] ➜ `building upgrade info`
-    ✦ {get;prefix} [exclusive | excl | 2] ➜ `SK2 features`;
+    ✦ {get;prefix} [feed | f] ➜ `setup feed channels`
+    
     thumbnail.url:{guildicon};
     color:3B88C3;
     footer.text:Triggered by: {usernick};
- footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
-    footer.text:You can set your own perfix by typing ➜ b!personalprefix set <yourPrefix>;
+    footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    footer.text:You can set your own prefix by typing ➜ b!personalprefix set <yourPrefix>;
   }}
 }
 
@@ -50,119 +39,12 @@ CREATING FUNCTIONS FOR CALLING HELPS
   }}
 }
 
-{//;function to show rewards help}
-{func;rewards;
-  {embed;{buildembed;
-    title:THANKS FOR USING SIDEKICK!;
-    description:
-    Become a patron for faster updates and exclusive features, including switching to the all-new **Sidekick II**.;
-    fields.name:Sidekick: FREE;
-    fields.value:
-    War Feed, Join & Leave, Donation Notification - {get;warfeedFree} updates
-    Clan Feed & Best - {get;feedFree} updates{newline}{zws};
-
-    fields.name:$3 Patron : Faster Updates;
-    fields.value:
-    War Feed, Join & Leave, Donation Notification - {get;warfeedFasterSk}
-    Clan Feed & Best - {get;feedFasterSk}{newline}{zws};
-
-    fields.name:$5 Patron : Sidekick II;
-    fields.value:
-    Clan War Leagues
-    Export War Attacks
-    Clan Games in Best
-    War Notes
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2} updates
-    Clan Feed & Best - {get;feedSk2} updates {newline}{zws};
-    fields.name:$10 Patron : Sidekick II for Multiple Clans;
-    fields.value:
-    Sidekick II for multiple clans in 1 Discord Server
-    Intended for family clan servers with <5 clans.
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2} updates
-    Clan Feed & Best - {get;feedSk2} updates{newline}{zws};
-    fields.name:$50 Patron : Sidekick II for Leagues / Sponsors;
-    fields.value:
-    Sidekick II for Leagues and other multi-server, multi-clan users.{newline}{zws}
-    [Support us on Patreon](https://www.patreon.com/clashsidekick);
-    footer.text:Triggered by: {usernick};
-    timestamp:;
-    footer.icon_url:{useravatar};
-    thumbnail.url:{guildicon};
-    color:3B88C3;
-    image.url:https://cdn.discordapp.com/attachments/480258285778370581/512876050317967377/unknown.png;
-  }}
-}
-
-{//;function to show rewards help}
-{func;cycle;
-  {embed;{buildembed;
-    title:WHEN WAR AND CLAN FEEDS WILL BE POSTED?;
-    description:After you have sucessfully Setup SK in your server feeds will start posing depending on which version of SK you are using.;
-    fields.name:Sidekick: FREE;
-    fields.value:
-    War Feed, Join & Leave, Donation Notification - {get;warfeedFree} updates
-    Clan Feed & Best - {get;feedFree} updates{newline}{zws};
-
-    fields.name:$3 Patron : Faster Updates;
-    fields.value:
-    War Feed, Join & Leave, Donation Notification - {get;warfeedFasterSk}
-    Clan Feed & Best - {get;feedFasterSk}{newline}{zws};
-
-    fields.name:$5 Patron : Sidekick II;
-    fields.value:
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2} updates
-    Clan Feed & Best - {get;feedSk2} updates {newline}{zws};
-    fields.name:$10 Patron : Sidekick II for Multiple Clans;
-    fields.value:
-    Intended for family clan servers with <5 clans.{newline}{zws}
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2} updates
-    Clan Feed & Best - {get;feedSk2} updates {newline}{zws};
-
-    fields.name:$50 Patron : Sidekick II for Leagues / Sponsors;
-    fields.value:
-    Sidekick II for Leagues and other multi-server, multi-clan users.{newline}{zws}
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2} updates
-    Clan Feed & Best - {get;feedSk2} updates {newline}{zws}
-    [Support us on Patreon](https://www.patreon.com/clashsidekick);
-    footer.text:Triggered by: {usernick};
-    timestamp:;
-    footer.icon_url:{useravatar};
-    thumbnail.url:{guildicon};
-    color:3B88C3;
-    image.url:https://cdn.discordapp.com/attachments/480258285778370581/512876050317967377/unknown.png;
-  }}
-}
-
-{//;function to show patreon help}
-{func;patreon;
-  {embed;{buildembed;
-    title:HOW TO GET SK-II INVITE LINK?;
-    description:SIDEKICK -II is the Monthly Subscrition Version of Sidekick. 
-
-**__To Get Sidekick-II__**
-:one: [Click here](https://www.patreon.com/clashsidekick) to support us on PATREON.
-```Details about subscriptions can be found there.```
-:two: Connect your Discord Account with PATREON to automatically get <@&419564360298528789> Role in this server.
-```Log into your Patreon Account. In ACCOUNT Section, you’ll see the option to Connect your Discord ID with Patreon account.```
-:three: Once you get the above mentioned role, find the SK-II invite link in <#419761858703261696>{newline}{zws}
-**Help**;
-    fields.name:How to Receive Patreon Discord Role?;
-    fields.value:[Click Here](https://support.patreon.com/hc/en-us/articles/212052266-How-do-I-receive-my-Discord-role-);
-    fields.name:Need More Assistance Receiving Access to Patreon Discord Rewards?;
-    fields.value:[Click Here](https://support.patreon.com/hc/en-us/articles/115002341603);
-    image.url:https://cdn.discordapp.com/attachments/480258285778370581/512876050317967377/unknown.png;
-    color:3B88C3;
-    footer.text:Triggered by: {usernick};
-    timestamp:;
-    footer.icon_url:{useravatar};
-  }}
-}
 
 {//;function to show lootcap help}
 {func;lootcap;
   {embed;{buildembed;
     title:WHY CLAN FEED NOT SHOWING FEW MEMBERS?;
-    description:{zws}{newline}Check in the in-game Profiles of those members, how much **Gold** & **Elixir** they have looted. Supercell doesn't track Gold and Elixir loots after the **2 billion** cap.{newline}{zws};
+    description:{zws}{newline}Check in the in-game profiles of those members, how much **Gold** & **Elixir** they have looted. Supercell doesn't track Gold and Elixir loots after the **2 billion** cap.{newline}{zws};
     thumbnail.url:{guildicon};
     color:3B88C3;
     footer.text:Triggered by: {usernick};
@@ -182,7 +64,7 @@ CREATING FUNCTIONS FOR CALLING HELPS
     ➜ There is no way to get war-feed with a closed War Log.
 
     ➜ Clan Feed posting, if enabled, will be posted even with closed War Log.;
-    fields.name:➜ You may have to wait around 45-60 mins after changing War Log staus.{zws}{newline};
+    fields.name:➜ You may have to wait around 45-60 mins after changing War Log status.{zws}{newline};
     fields.value:_ _;
     image.url:https://cdn.discordapp.com/attachments/480258285778370581/507628348613197836/unknown.png;
     thumbnail.url:{guildicon};
@@ -193,40 +75,14 @@ CREATING FUNCTIONS FOR CALLING HELPS
   }}
 }
 
-{//;function to show sk2 exclusive features help}
-{func;sk2;
-  {embed;{buildembed;
-    title:EXCLUSIVE FEATURES SIDEKICK II;
-    fields.name:Sidekick II : [Donate $5/month]{zws}{newline};
-    fields.value:
-    Clan War Leagues
-    Export War Attacks
-    Clan Games in Best
-    War Notes
-    War Feed, Join & Leave, Donation Notification - {get;warfeedSk2}
-    Clan Feed & Best - {get;feedSk2}{newline}{zws};
-    fields.name:Sidekick II : Multi-Clan [Donate $10/month];
-    fields.value:
-    Sidekick II for multiple clans in 1 Discord Server
-    Intended for family clan servers with <5 clans.{newline}{zws};
-    fields.name:Sidekick II : League / Sponsor [Donate $50/month];
-    fields.value:
-    Sidekick II for Leagues and other multi-server, multi-clan users.{newline}[Support us on Patreon](https://www.patreon.com/clashsidekick);
-    footer.text:Triggered by: {usernick};
-    timestamp:;
-    footer.icon_url:{useravatar};
-    thumbnail.url:{guildicon};
-    color:3B88C3;
-    image.url:https://cdn.discordapp.com/attachments/480258285778370581/512876050317967377/unknown.png;
-  }}
-}
 
 {//;function to show upgrade help}
 {func;upgrade;
   {embed;{buildembed;
     title:WILL SIDEKICK SHOW UPGRADE INFO ABOUT BUILDINGS;
     description:
-There is no way for sidekick to tell which buildings a user is yet to upgrade. Supercell doesn't provide this info through its API. Supercell only provides info about what left to upgrade for troops and spells.;
+There is no way for sidekick to tell which buildings a user is yet to upgrade. Supercell doesn't provide this info through its API. 
+Supercell only provides info about what are left to upgrade for heroes, troops and spells.;
     fields.name:Will SK ever show the upgrade info for Buildings?;
     fields.value:Not until Supercell make this info available through its API;
     footer.text:Triggered by: {usernick};
@@ -245,7 +101,7 @@ There is no way for sidekick to tell which buildings a user is yet to upgrade. S
 **1. War Feed** - Posts war attacks.
 **2. Clan Feed** - Posts troops & heroes upgrades and member join/leave info.
 
-To set up feeds correctly, follow the below steps;
+To set up feeds correctly, follow the steps below;
     fields.name:Step 1 - Link Feed Channels to Sidekick;
     fields.value:
 **/channel #channelName #clanTag**
@@ -264,7 +120,6 @@ Example -/channel <#380240996300226570> war;
     fields.name:Note;
     fields.value:
 ❃ To get war feeds War Log must be set to `Public`
-❃ Feeds posting timing depends on the version of Sidekick
 ❃ You can toggle clan/war feed posting
 ```
 /option feed on/off
@@ -297,15 +152,6 @@ CALLING HELPS
   ;["patreon","patron","pat"];
     {delete}
     {func.patreon}
-  ;["rewards","reward","r"];
-    {delete}
-    {func.rewards}
-  ;["exclusive","excl","sk2","2"];
-    {delete}
-    {func.sk2}
-  ;["cycle","c"];
-    {delete}
-    {func.cycle}
   ;["upgrade","up","u"];
     {delete}
     {func.upgrade}
