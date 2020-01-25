@@ -1,0 +1,1857 @@
+  {//;QUOTE v 7.0}
+
+  {//;{get;@{userid}msgids}
+  {get;@{userid}nicks}
+  {get;@{userid}chids}
+  {get;@{userid}srvids}
+  }
+
+  {//;delete}
+  {suppresslookup;true}
+  {set;prefix;{if;{prefix};==;" ";;{prefix}}{if;{logic;!;{iscc}};t{space}}{commandname}}
+
+
+  {//;
+  -----------------------------
+  CREATING FUNCTIONS FOR HELPS, ERROR MSGS & EMBEDS
+  -----------------------------
+  }
+
+  {set;sampleChannels;[]}
+  {foreach;element;{channels};
+    {if;{channelistext;{get;element}};==;true;
+      {push;{get;sampleChannels};{get;element}}
+    }
+  }
+
+  {//;function for displaying detailed help}
+  {func;detailedHelp;
+    {embedbuild;
+      title:Quote Embeded & Non Embeded Messages;
+      description:
+
+  Features:
+  ✦ Quotes Messages posted by users/bots.
+  ✦ Option to add comment while quoting a message.
+  ✦ Saves vital or frequently used Message Links for easy retrieval.
+  ✦ Checks for dead saved links. Type `{get;prefix} -L help`
+  ✦ Separate Database for each user.;
+      fields.name:Available Flags;
+      fields.value:
+  【 -s】Saves Message Link. For Help ➜ {get;prefix} -s
+  【 -e】Edits Message Link. For Help{repeat;{zws}{space};2}➜ {get;prefix} -e
+  【  -l 】Lists Saved Links. For Help ➜ {get;prefix}{repeat;{zws}{space};2}-L help
+  【 -d】Resets Database. For Help ➜ {get;prefix} -d help;
+      fields.name:{zws}{newline}To Quote a Message of This Channel;
+      fields.value:
+  **{get;prefix} <messageID> [comment]**
+  ➜ {get;prefix} 508360612376739840
+  ➜ {get;prefix} 508360612376739840 Well said.;
+      fields.name:To Quote a Message of Any Other Channel;
+      fields.value:
+  **{get;prefix} <#channelMention> <messageID> [comment]**
+  ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508360618402376739
+  ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508364006123767398 I agree.;
+      fields.name:To Quote a Message from Saved Message Links;
+      fields.value:**{get;prefix} <nickname> [comment]**
+  ➜ {get;prefix} rules
+  ➜ {get;prefix} rules Read this;
+      fields.name:USE IT AS CUSTOM COMMAND;
+      fields.value:
+  ➜ {prefix}cc set Quote {lb}exec{semi}Quote{semi}{lb}args{rb}{rb};
+    thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png;
+      color:white;
+      footer.icon_url:{useravatar;290769490268913665};
+      footer.text:Quote v 7.0 [by WereWolf#0341] ❃ Inspiration: Kao#0001 & simonizor#0420 ❃ Helped by awesome Blarg Support.;
+    }
+    {return}
+  }
+
+
+  {//;function for displaying Save links to database help}
+  {//;set;dbSaveHelpAuthorN;COMMAND SYNTAX ERROR}
+  {set;dbSaveHelpColor;white}
+  {set;dbSaveHelpTitle;How To Save Messaage Link to Database}
+  {set;dbSaveHelpThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png}
+  {func;dbSaveHelp;
+    {embed;{embedbuild;
+      author.name:{get;dbSaveHelpAuthorN};
+      title:{get;dbSaveHelpTitle};
+      fields.name:  To Save a Message Link of This Channel;
+      fields.value:
+  {get;prefix} <-s> <messageId> <nickName>{newline} ➜ {get;prefix} -s 508360840612376739 test;
+      fields.name:To Save a Message Link of Any Other Channel;
+      fields.value:
+  {get;prefix} <-s> <#channelMention> <messageId> <nickName>{newline} ➜ {get;prefix} -s <#{randchoose;{get;sampleChannels}}> 508360612376739840 test1;
+  {//;    fields.name:To View Saved Message Links of {guildname};
+    fields.value: ➜ {get;prefix} -l;
+    fields.name:To View Saved Message Links of All Guilds;
+    fields.value: ➜ {get;prefix} -l all;}
+    thumbnail.url:{get;dbSaveHelpThumbnail};
+    color:{get;dbSaveHelpColor};
+    footer.text:Nickname has to be one word.;
+    footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    }}
+    {return}
+  }
+
+  {//;function for displaying editing saved links help}
+  {set;dbEditHelpAuthorN;Improper Use of Command}
+  {set;dbEditHelpColor;red}
+  {set;dbEditHelpThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png}
+  {func;dbEditHelp;
+    {embed;{embedbuild;
+      author.name:{get;dbEditHelpAuthorN};
+      description:```<> Required```;
+      title:Command Syntax;
+      fields.name:To Only Change Message ID;
+      fields.value:
+  {get;prefix} <-e> <nickname> <oldChannelMention> <newMessageId>{newline} ➜ {get;prefix} -e test <#{randchoose;{get;sampleChannels}}> 503260612376737777{newline}{zws};
+      fields.name:To Change Channel ID & Message ID;
+      fields.value:
+  {get;prefix} <-e> <nickname> <newChannelMention> <newMessageId> {newline} ➜ {get;prefix} -e test <#{randchoose;{get;sampleChannels}}> 508360612376739840{newline}{zws};
+      fields.name:To Only Change Nickname;
+      fields.value:
+  {get;prefix} <-e> <nickname> <newNickname>{newline} ➜ {get;prefix} -e test testNew{newline}{zws};
+      fields.name:To Totally Change a Stored Message Link;
+      fields.value:
+  {get;prefix} <-e> <nickname> <newChannelMention> <newMessageId> <newNickname>{newline} ➜ {get;prefix} -e test <#{randchoose;{get;sampleChannels}}> 508360612376739840 testNew{newline}{zws};
+      fields.name:To View Saved Message Links of {guildname};
+      fields.value: ➜ {get;prefix} -l;
+      fields.name:To View Saved Message Links of All Guilds;
+      fields.value: ➜ {get;prefix} -l all;
+      thumbnail.url:{get;dbEditHelpThumbnail};
+      color:{get;dbEditHelpColor};
+      footer.text:Nickname has to be one word.;
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    }}
+    {return}
+  }
+
+  {//;function for displaying quoting message help}
+  {func;directQuoteHelp;
+    {embedbuild;
+      title:{get;directQuoteTitle};
+      description:{get;directQuoteDesc};
+      fields.name:To Quote Message 0f {channelname} Channel;
+      fields.value:{get;prefix} <messageID> [-r yourComment]{newline} ➜ {get;prefix} 508360612376739840{newline} ➜ {get;prefix} 508360612376739840 -r Well said.{newline} ➜ {get;prefix} <#{channelid}> 508360612376739840 Well said.;
+      fields.name:To Quote Message 0f Any Other Channel;
+      fields.value:{get;prefix} <channel ID|Mention> <messageID> [-r yourComment]{newline} ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508323767398460610{newline} ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508323767398460610 -r I agree.{newline} ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508364006123767398 I agree.;
+      fields.name:To Quote Message Link from Database;
+      fields.value:{get;prefix} <nicknameOfSavedMessageID> [-r yourComment]{newline} ➜ {get;prefix} rules{newline} ➜ {get;prefix} rules -r Read this.{newline} ➜ {get;prefix} rules Read this.{newline}{zws};
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+      footer.text:If Channel Mention is given with Message ID then No need to add `-r` flag to add comment.;
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    }
+    {return}
+  }
+
+  {//;function for displaying flag -r help. with the change in code now flag -r is not needed}
+  {set;flagRHelpTitle;Flag -r can't be Blank}
+  {func;flagRHelp;
+    {embed;{embedbuild;
+      title:{get;flagRHelpTitle};
+      fields.name:To Add Remarks in a Quote Message 0f {channelname} Channel;
+      fields.value:{get;prefix} <messageID> <-r yourComment>{newline} ➜ {get;prefix} 508360612376739840 -r Well said.{newline} ➜ {get;prefix} <#{channelid}> 508360612376739840 Well said.;
+      fields.name:To Add Remarks in a Quote Message 0f Another Channel;
+      fields.value:{get;prefix} <channel ID|Mention> <messageID> <-r yourComment>{newline} ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508323767398460610 -r I agree.{newline} ➜ {get;prefix} <#{randchoose;{get;sampleChannels}}> 508364006123767398 I agree.;
+      fields.name:To Add Remarks in a Saved Quote Message Link;
+      fields.value:{get;prefix} <nicknameOfSavedMessageID> <-r yourComment>{newline} ➜ {get;prefix} rules -r Read this.{newline} ➜ {get;prefix} rules Read this.{newline}{zws};
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+      footer.text:If Channel Mention is given with Message ID then No need to add `-r` flag to add comment.;
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    }}
+    {return}
+  }
+
+  {//;function for displaying database error msg}
+  {func;dbError;
+    {embed;{embedbuild;
+      title:DATABASE ERROR;
+      fields.name:Total Nicknames;
+      fields.value:{length;{get;@{userid}nicks}};
+      fields.name:Total Channel IDs;
+      fields.value:{length;{get;@{userid}chids}};
+      fields.inline:true;
+      fields.name:Total Message IDs;
+      fields.value:{length;{get;@{userid}msgids}};
+      fields.inline:true;
+      fields.name:Total Guild IDs;
+      fields.value:{length;{get;@{userid}srvids}};
+      fields.inline:true;
+      fields.name:Solution - Reset the Database;
+      fields.value:{get;prefix} -d all;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+    }}
+  **Nicknames [{length;{get;@{userid}nicks}}]**```{join;{get;@{userid}nicks};{space;2}|}```
+  **Channel IDs [{length;{get;@{userid}chids}}]**```{join;{get;@{userid}chids};{space;2}|}```
+  **Message IDs [{length;{get;@{userid}msgids}}]**```{join;{get;@{userid}msgids};{space;2}|}```
+  **Guild IDa [{length;{get;@{userid}srvids}}]**```{join;{get;@{userid}srvids};{space;2}|}```
+    {return}
+  }
+
+  {//;function for displaying database status msg}
+  {func;dbStatus;
+    {set;count;0}
+    {foreach;~element;{get;@{userid}srvids};
+      {if;{get;~element};==;{guildid};
+        {set;count;{math;+;{get;count};1}}
+      }
+    }
+    {embedbuild;
+      title:{get;~dbStatusTitle};
+      fields.name:Record No.;
+      fields.value:```{get;~sl}```;
+      fields.inline:true;
+      fields.name:Nickname;
+      fields.value:```{get;~n}```;
+      fields.inline:true;
+      fields.name:Valid for User;
+      fields.value:```{usernick}```;
+      fields.inline:true;
+      fields.name:Valid for Guild ID;
+      fields.value:```{get;~s}```;
+      fields.inline:true;
+      fields.name:Channel ID;
+      fields.value:```{get;~c}```;
+      fields.inline:true;
+      fields.name:Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      footer.text:Saved Message IDs ➜ Total: {length;{get;@{userid}srvids}}  ◈  For {guildname}: {get;count};
+      thumbnail.url:{get;~dbStausThumbnail};
+      color:{get;~dbStatusColor};
+    }
+    {return}
+  }
+
+  {//;function for displaying embed having 0 field}
+  {func;embed0;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 1 field}
+  {func;embed1;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 2 fields}
+  {func;embed2;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+    {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 3 fields}
+  {func;embed3;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 4 fields}
+  {func;embed4;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 5 fields}
+  {func;embed5;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 6 fields}
+  {func;embed6;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 7 fields}
+  {func;embed7;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+  b  fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 8 fields}
+  {func;embed8;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      fields.name:{get;field8};
+      fields.value:{get;value8};
+      fields.inline:{get;inline8};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 9 fields}
+  {func;embed9;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      fields.name:{get;field8};
+      fields.value:{get;value8};
+      fields.inline:{get;inline8};
+      fields.name:{get;field9};
+      fields.value:{get;value9};
+      fields.inline:{get;inline9};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 10 fields}
+  {func;embed10;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      fields.name:{get;field8};
+      fields.value:{get;value8};
+      fields.inline:{get;inline8};
+      fields.name:{get;field9};
+      fields.value:{get;value9};
+      fields.inline:{get;inline9};
+      fields.name:{get;field10};
+      fields.value:{get;value10};
+      fields.inline:{get;inline10};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for displaying embed having 11 fields}
+  {func;embed11;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      fields.name:{get;field8};
+      fields.value:{get;value8};
+      fields.inline:{get;inline8};
+      fields.name:{get;field9};
+      fields.value:{get;value9};
+      fields.inline:{get;inline9};
+      fields.name:{get;field10};
+      fields.value:{get;value10};
+      fields.inline:{get;inline10};
+      fields.name:{get;field11};
+      fields.value:{get;value11};
+      fields.inline:{get;inline11};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+  }}
+  {return}
+  }
+
+  {//;function for displaying embed having 12 fields}
+  {func;embed12;
+    {embed;{embedbuild;
+      timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+      color:{get;~color};
+      title:{get;~title};
+      url:{get;~url};
+      footer.text:{get;~footerText};
+      footer.icon_url:{get;~footer.icon};
+      description:{get;~desc};
+      fields.name:{get;field1};
+      fields.value:{get;value1};
+      fields.inline:{get;inline1};
+      fields.name:{get;field2};
+      fields.value:{get;value2};
+      fields.inline:{get;inline2};
+      fields.name:{get;field3};
+      fields.value:{get;value3};
+      fields.inline:{get;inline3};
+      fields.name:{get;field4};
+      fields.value:{get;value4};
+      fields.inline:{get;inline4};
+      fields.name:{get;field5};
+      fields.value:{get;value5};
+      fields.inline:{get;inline5};
+      fields.name:{get;field6};
+      fields.value:{get;value6};
+      fields.inline:{get;inline6};
+      fields.name:{get;field7};
+      fields.value:{get;value7};
+      fields.inline:{get;inline7};
+      fields.name:{get;field8};
+      fields.value:{get;value8};
+      fields.inline:{get;inline8};
+      fields.name:{get;field9};
+      fields.value:{get;value9};
+      fields.inline:{get;inline9};
+      fields.name:{get;field10};
+      fields.value:{get;value10};
+      fields.inline:{get;inline10};
+      fields.name:{get;field11};
+      fields.value:{get;value11};
+      fields.inline:{get;inline11};
+      fields.name:{get;field12};
+      fields.value:{get;value12};
+      fields.inline:{get;inline12};
+      {if;{get;~thumbnail};startswith;`Cannot read property;;
+      thumbnail.url:{get;~thumbnail}}
+    }}
+    {return}
+  }
+
+  {//;function for quoting embedded msgs posted by bots}
+  {func;quoteEmbed;
+    {set;~title;{jget;{messageembeds;{get;~c};{get;~m}};0.title}}
+    {set;~url;{jget;{messageembeds;{get;~c};{get;~m}};0.url}}
+    {set;~color;{jget;{messageembeds;{get;~c};{get;~m}};0.color}}
+    {set;~footerText;{jget;{jget;{messageembeds;{get;~c};{get;~m}};0.footer};text}}
+    {set;~image;{jget;{messageembeds;{get;~c};{get;~m}};0.image}}
+
+    {set;~thumbnail;{jget;{messageembeds;{get;~c};{get;~m}};0.thumbnail.url}}
+    {if;{get;~thumbnail};startswith;`Cannot read property;
+      {set;~thumbnail;{jget;{messageembeds;{get;~c};{get;~m}};0.image.url}}
+    }
+    {set;~desc;{jget;{messageembeds;{get;~c};{get;~m}};0.description}}
+
+    {set;fieldCounter;0}
+    {foreach;~element;{jget;{messageembeds;{get;~c};{get;~m}};0.fields};
+      {set;fieldCounter;{math;+;{get;fieldCounter};1}}
+      {set;field{get;fieldCounter};{jget;{get;~element};name}}
+      {set;value{get;fieldCounter};{jget;{get;~element};value}}
+      {set;inline{get;fieldCounter};{jget;{get;~element};inline}}
+    }
+
+    {//;detect if elements not found and set them to something}
+    {if;{get;~desc};startswith;`Cannot read property;{set;~desc;}}
+    {if;{get;~title};startswith;`Cannot read property;{set;~title;Quote Link}}
+    {if;{get;~color};startswith;`Cannot read property;
+      {get;~eColor;0}
+    ;
+      {set;~color;{exec;dectohex;{get;~color}}}
+    }
+    {if;{get;~url};startswith;`Cannot read property;
+      {set;~url;https://discordapp.com/channels/{guildid}/{get;~c}/{get;~m}}
+    }
+    {if;{get;~url};==;;
+      {set;~url;https://discordapp.com/channels/{guildid}/{regexreplace;{get;~c};/[<#>]/g;}/{get;~m}}
+    }
+    {set;~footer.icon;{jget;{messageembeds;{get;~c};{get;~m}};0.author.icon_url}}
+    {set;~user;{jget;{messageembeds;{get;~c};{get;~m}};0.author.name}}
+    {if;{get;~user};startswith;`;
+      {set;~user;Bot}
+    }
+    {if;{get;~footer.icon};==;;
+      {set;~footer.icon;https://cdn.discordapp.com/emojis/449314299291107329.gif?v=1}
+    ;
+      {if;{get;~footer.icon};startswith;`Cannot read property;
+        {set;~footer.icon;https://cdn.discordapp.com/emojis/449314299291107329.gif?v=1}
+      }
+    }
+
+    {//;send copy of embed}
+    {if;{join;{get;~r};{space}};!=;;
+      **Comment from {username}#{userdiscrim}** - {join;{get;~r};{space}}
+    }
+    {if;{get;~msg};==;;
+      {func.embed{get;fieldCounter}}
+    }
+  }
+
+  {//;function for displaying flag -d help}
+  {func;deleteHelp;
+    {embed;{embedbuild;
+      title:HOW TO DELETE SAVED LINKS;
+      fields.name:Delete a Saved Message Link;
+      fields.value: ➜ {get;prefix} -d nickname;
+      fields.name:To Delete All Saved Message Links of {guildname};
+      fields.value: ➜ {get;prefix} -d;
+      fields.name:To Delete Saved Message Links of All Guilds;
+      fields.value: ➜ {get;prefix} -d all;
+      footer.text:{zws};
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png;
+      color:white;
+    }}
+    {return}
+  }
+
+  {//;function for displaying flag -l help}
+  {func;dbListHelp;
+    {embed;{embedbuild;
+      title:HOW TO VIEW SAVED NICKNAMES;
+      description:There can be multiple Nicknames having same name in Database but Nicknames are Unique names per Guild.
+      Each User has different Database for Storing Nicknames.;
+      fields.name:To View Details about a Saved Record;
+      fields.value: ➜ {get;prefix} -l <seriallNumberOfNickname>;
+      fields.name:To Search a Nickname;
+      fields.value: ➜ {get;prefix} -l <nickname>;
+      fields.name:To View Saved Message IDs of {guildname};
+      fields.value: ➜ {get;prefix} -l;
+      fields.name:To View Saved Message IDs of All Guilds;
+      fields.value: ➜ {get;prefix} -l all;
+      fields.name:To View Dead Saved Links of {guildname};
+      fields.value: ➜ {get;prefix} -L;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png;
+      color:white;
+    }}
+    {return}
+  }
+
+  {//;function for displaying individual record using flag -l}
+  {func;dbDetailsIndividualRecord;
+    {embed;{embedbuild;
+      title:DETAILED INFO ABOUT RECORD NO. {get;@{userid}slNo;{get;positionN}};
+      fields.name:Nickname;
+      fields.value:```{get;~n}```;
+      fields.inline:true;
+      fields.name:Valid for Guild ID;
+      fields.value:```{get;~s}```;
+      fields.inline:true;
+      fields.name:Channel ID;
+      fields.value:```{get;~c}```;
+      fields.inline:true;
+      fields.name:Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      footer.text:Saved Message IDs ➜ Total: {length;{get;@{userid}srvids}}  ◈  For {guildname}: {get;count};
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png;
+      color:white;
+    }}
+    {return}
+  }
+
+  {//;
+  -----------------------------
+  CHECKING IF HELP MSG IS TO BE DISPLAYED
+  -----------------------------
+  }
+  {switch;{args;0};["h","-h","help","--help"];
+    {void;{output;{embed;{func.detailedHelp}}}}
+  }
+
+  {if;{argslength};==;0;
+    {void;{output;{embed;{func.detailedHelp}}}}
+  }
+
+  {//;if;{flagset;d};
+    {switch;{lower;{flag;d}};["","all"];
+    ;
+      {void;{output;{func.deleteHelp}}}
+    }
+  }
+
+  {if;{flagset;D};
+    {void;{output;{func.deleteHelp}}}
+  }
+
+  {//;if;{flagset;l}; {//;disabled due to search feature of flag l}
+    {switch;{lower;{flag;l}};["","all"];
+      {void;{output;{func.dbListHelp}}}
+    }
+  }
+
+  {if;{flagset;L};
+    {switch;{flag;L};["h","-h","help","--help"];
+      {func.dbListHelp}
+    }
+  }
+
+  {//;
+  -----------------------------
+  FLAG d [RESETS DATABASE]
+  -----------------------------
+  }
+
+  {if;{flagset;d};
+    {set;tempSlNo;[]}
+    {if;{lower;{flag;d}};==;all;
+      {set;@{userid}chids;[]}
+      {set;@{userid}msgids;[]}
+      {set;@{userid}nicks;[]}
+      {set;@{userid}slNo;[]}
+      {set;@{userid}slCounter;[]}
+      {set;@{userid}srvids;[]}
+      {embed;{embedbuild;
+        title:Full Database Reset Done;
+        color:green;
+      }}
+      {return}
+    ;
+      {if;{flag;d};==;;
+        {set;tempChids;[]}
+        {set;tempMsgids;[]}
+        {set;tempNicks;[]}
+        {set;tempSrvids;[]}
+        {set;tempCounter;0}
+        {set;~length;{length;{get;@{userid}srvids}}}
+        {for;~number;0;<;{get;~length};
+          {if;{guildid};!=;{get;@{userid}srvids;{get;~number}};
+            {push;tempChids;{get;@{userid}chids;{get;~number}}}
+            {push;tempMsgids;{get;@{userid}msgids;{get;~number}}}
+            {push;tempNicks;{get;@{userid}nicks;{get;~number}}}
+            {push;tempSrvids;{get;@{userid}srvids;{get;~number}}}
+          }
+        }
+        {foreach;element;{get;tempNicks};
+          {set;tempCounter;{math;+;{get;tempCounter};1}}
+          {push;tempSlNo;{get;tempCounter}}
+        }
+        {set;@{userid}chids;{get;tempChids}}
+        {set;@{userid}msgids;{get;tempMsgids}}
+        {set;@{userid}nicks;{get;tempNicks}}
+        {set;@{userid}slNo;{get;tempSlNo}}
+        {set;@{userid}slCounter;{get;tempCounter}}
+        {set;@{userid}srvids;{get;tempSrvids}}
+        {embed;{embedbuild;
+          title:Database Reset for {guildname} Done;
+          color:green;
+        }}
+        {return}
+      ;
+        {set;positionN;{indexof;{get;@{userid}slNo};{flag;d}}}
+        {if;{get;positionN};==;-1;
+          {embed;{embedbuild;
+            title:This Serial No. is not present in Database.;
+            description:```{flag;d}```;
+            footer.text:For Detailed Help Type ➜ {get;prefix} -D help;
+            footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+            color:red;
+          }}
+          {return}
+        ;
+          {set;~c;{join;{splice;{get;@{userid}chids};{get;positionN};1};{space}}}
+          {set;~m;{join;{splice;{get;@{userid}msgids};{get;positionN};1};{space}}}
+          {set;~s;{join;{splice;{get;@{userid}srvids};{get;positionN};1};{space}}}
+          {set;~sl;{join;{splice;{get;@{userid}slNo};{get;positionN};1};{space}}}
+          {set;~n;{join;{splice;{get;@{userid}nicks};{get;positionN};1};{space}}}
+        }
+        {set;tempCounter;0}
+        {foreach;element;{get;@{userid}nicks};
+          {set;tempCounter;{math;+;{get;tempCounter};1}}
+          {push;tempSlNo;{get;tempCounter}}
+        }
+        {get;tempSlNo}{return}
+        {set;@{userid}slNo;[]}
+        {push;@{userid}slNo;{get;tempSlNo}}
+        {set;~dbStatusTitle;Message Link Deleted from Database for {guildname}}
+        {set;~dbStatusColor;black}
+        {set;~dbStausThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702913522237441/154183016898369210.png}
+        {embed;{func.dbstatus}}
+      }
+    }
+  }
+
+  {//;
+  -----------------------------
+  CHECKING DATABASE FOR ERRORS
+  -----------------------------
+  }
+
+  {if;{get;@{userid}chids};==;;{set;@{userid}chids;[]}}
+  {if;{get;@{userid}msgids};==;;{set;@{userid}msgids;[]}}
+  {if;{get;@{userid}nicks};==;;{set;@{userid}nicks;[]}}
+  {if;{get;@{userid}srvids};==;;{set;@{userid}srvids;[]}}
+  {if;{get;@{userid}slNo};==;;{set;@{userid}slNo;[]}}
+  {if;{get;@{userid}slCounter};==;;{set;@{userid}slCounter;0}}
+
+  {if;{length;{get;@{userid}nicks}};!=;{length;{get;@{userid}chids}};
+    {void;{output;{func.dbError}}}
+  ;
+    {if;{length;{get;@{userid}nicks}};!=;{length;{get;@{userid}msgids}};
+      {void;{output;{func.dbError}}}
+    ;
+      {if;{length;{get;@{userid}nicks}};!=;{length;{get;@{userid}srvids}};
+        {void;{output;{func.dbError}}}
+      }
+    }
+  }
+
+  {//;
+  -----------------------------
+  FLAG L [LISTS CORREPTED MSG IDS]
+  -----------------------------
+  }
+  {if;{flagset;L};
+    {set;database;[]}
+    {set;correptLinks;[]}
+    {set;~length;{length;{get;@{userid}nicks}}}
+    {if;{get;~length};==;0;
+      {embed;{embedbuild;
+        title:No Saved Record in Database;
+        color:red;
+      }}
+      {return}
+    }
+    {for;~number;0;<;{get;~length};
+      {if;{guildid};==;{get;@{userid}srvids;{get;~number}};
+        {push;database;{get;@{userid}slNo;{get;~number}}}
+      }
+    }
+    {if;{length;{get;database}};==;0;
+      {embed;{embedbuild;
+        title:No Saved Record for {guildname} in Database;
+        color:red;
+      }}
+      {return}
+    }
+    {foreach;element;{get;database};
+      {set;positionN;{indexof;{get;@{userid}slNo};{get;element}}}
+      {set;~c;{get;@{userid}chids;{get;positionN}}}
+      {set;~m;{get;@{userid}msgids;{get;positionN}}}
+      {set;~n;{get;@{userid}nicks;{get;positionN}}}
+      {set;~sl;{get;@{userid}slNo;{get;positionN}}}
+
+      {if;{messagetext;{get;~c};{get;~m}};==;`No message found`;
+      {push;correptLinks;{get;@{userid}slNo;{get;positionN}} -  {get;@{userid}chids;{get;positionN}}  -  {get;@{userid}msgids;{get;positionN}}  -  {get;@{userid}nicks;{get;positionN}}}
+      }
+    }
+    {if;{length;{get;correptLinks}};==;0;
+      {embed;{embedbuild;
+        title:No Dead Links for {guildname};
+        color:green;
+      }}
+      {return}
+    ;
+  **_INVALID LINKS OF {guildname} [{guildid}]_**
+  **Sl.  Channel IDs                             Message IDs                           Nicknames**
+  {join;{get;correptLinks};{newline}}
+
+  _Type `{get;prefix} -L help` for other List Options_
+      {return}
+    }
+  }
+
+  {//;
+  -----------------------------
+  FLAG l [LISTS STORED MSG IDS]
+  -----------------------------
+  }
+
+  {if;{flagset;l};
+    {set;positionN;{indexof;{get;@{userid}slNo};{lower;{flag;l}}}}
+    {if;{get;positionN};!=;-1;
+      {set;~c;{get;@{userid}chids;{get;positionN}}}
+      {set;~m;{get;@{userid}msgids;{get;positionN}}}
+      {set;~s;{get;@{userid}srvids;{get;positionN}}}
+      {set;~sl;{get;@{userid}slNo;{get;positionN}}}
+      {set;~n;{get;@{userid}nicks;{get;positionN}}}
+      {func.dbDetailsIndividualRecord}
+    ;
+      {if;{length;{get;@{userid}nicks}};==;0;
+        {embed;{embedbuild;
+          title:No Saved Links in Database.;
+          color:red;
+        }}
+        {return}
+      }
+    }
+    {set;database;[]}
+    {set;~length;{length;{get;@{userid}chids}}}
+    {if;{lower;{flag;l}};==;all;
+      {set;listHeading;SAVED NICKNAMES OF All Guilds```Valid for {repeat;{zws}{space};7}: {usernick}
+ID of This Guild : {guildid}```}
+      {for;~number;0;<;{get;~length};
+        {if;{get;@{userid}srvids;{get;~number}};==;{guildid};
+          {push;database;{get;@{userid}slNo;{get;~number}} -  {get;@{userid}chids;{get;~number}}  -  {get;@{userid}msgids;{get;~number}}  -  **{get;@{userid}srvids;{get;~number}}**  -  {get;@{userid}nicks;{get;~number}}}
+        ;
+          {push;database;{get;@{userid}slNo;{get;~number}} -  {get;@{userid}chids;{get;~number}}  -  {get;@{userid}msgids;{get;~number}}  -  {get;@{userid}srvids;{get;~number}}  -  {get;@{userid}nicks;{get;~number}}}
+        }
+      }
+      {if;{length;{get;database}};==;0;
+        {embed;{embedbuild;
+          title:No Saved Record for Any Guild in Database;
+          color:red;
+        }}
+        {return}
+      }
+    ;
+      {if;{flag;l};==;;
+        {set;listHeading;SAVED NICKNAMES```Valid for : {usernick}
+For Guild : {guildname} [{guildid}]```
+        }
+        {for;~number;0;<;{get;~length};
+          {if;{guildid};==;{get;@{userid}srvids;{get;~number}};
+            {push;database;{get;@{userid}slNo;{get;~number}} -  {get;@{userid}chids;{get;~number}}  -  {get;@{userid}msgids;{get;~number}}  -  {get;@{userid}nicks;{get;~number}}}
+          }
+        }
+        {if;{length;{get;database}};==;0;
+          {embed;{embedbuild;
+            title:No Saved Record for {guildname} in Database;
+            color:red;
+          }}
+          {return}
+        }
+      ;
+        {set;listHeading;NICKNAME(s) MATCHING "{flag;l}"```Valid for {repeat;{zws}{space};7}: {usernick}
+ID of This Guild : {guildid}```}
+        {for;~number;0;<;{get;~length};
+          {if;{get;@{userid}nicks;{get;~number}};includes;{lower;{flag;l}};
+          {if;{get;@{userid}srvids;{get;~number}};==;{guildid};
+            {push;database;{get;@{userid}slNo;{get;~number}} -  {get;@{userid}chids;{get;~number}}  -  {get;@{userid}msgids;{get;~number}}  -  **{get;@{userid}srvids;{get;~number}}**  -  {get;@{userid}nicks;{get;~number}}}
+          ;
+            {push;database;{get;@{userid}slNo;{get;~number}}  -  {get;@{userid}chids;{get;~number}}  -  {get;@{userid}msgids;{get;~number}}  -  {get;@{userid}srvids;{get;~number}}  -  {get;@{userid}nicks;{get;~number}}}
+          }
+        }}
+        {if;{length;{get;database}};==;0;
+          {embed;{embedbuild;
+            title:Nickname "{flag;l}" is Not Saved for any Guild;
+            color:red;
+          }}
+          {return}
+        }
+      }
+    }
+    {sort;{get;database}}
+  **_{get;listHeading}_**
+    {if;{flag;l};==;;
+**   Channel ID                             Message ID                           Nickname**
+    ;
+**   Channel ID                             Message ID                           Guild ID                                     Nickname**
+    }
+{join;{get;database};{newline}}
+
+_Type `{get;prefix} -L help` for other List Options_
+    {return}
+  }
+
+  {//;
+  -----------------------------
+  CHECKING USER INPUT FOR PUSHING DATA INTO TEMP VARIABLES
+  -----------------------------
+  }
+
+  {//;checking flag s}
+  {if;{flagset;s};
+    {if;{flag;s};==;;
+      {set;dbSaveHelpAuthorN;{zws}}
+      {func.dbSaveHelp}
+      {return}
+    ;
+      {set;arg;{split;{flag;s};{space}}}
+      {set;dbSaveHelpColor;red}
+      {set;dbSaveHelpThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png}
+      {switch;{length;{get;arg}}
+      ;1;
+        {if;{channelname;{get;arg;0}};!=;`No channel found`;
+          {set;dbSaveHelpTitle;Only Channel Mention Entered}
+        ;
+          {set;dbSaveHelpTitle;Nickname Missing}
+        }
+        {set;dbSaveHelpAuthorN;ERROR - Minumum 2 Args Required.}
+
+        {void;{output;{func.dbSaveHelp}}}
+      ;2;
+        {set;~c;{channelid}}
+        {set;~m;{shift;{get;arg}}}
+        {set;~n;{shift;{get;arg}}}
+      ;3;
+        {set;~c;{shift;{get;arg}}}
+        {set;~m;{shift;{get;arg}}}
+        {set;~n;{shift;{get;arg}}}
+      ;
+        {set;dbSaveHelpAuthorN;ERROR - Maximum 3 Args Allowed.}
+        {func.dbSaveHelp}
+        {return}
+      }
+    }
+  }
+
+  {//;checking flag e}
+  {if;{flagset;e};
+    {if;{flag;e};==;;
+      {set;dbEditHelpAuthorN;HOW TO EDIT SAVED MESSAGE LINKS}
+      {set;dbEditHelpColor;white}
+      {set;dbEditHelpThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510697769409708038/154183016898369210.png}
+      {func.dbEditHelp}
+    }
+    {set;arg;{split;{flag;e};{space}}}
+    {set;~serial;{shift;{get;arg}}}
+    {set;flagused;e}
+    {//;{get;arg} / {get;~serial} / {length;{get;arg}}{return}}
+    {set;editPositionN;{indexof;{get;@{userid}slNo};{get;~serial}}}
+    {//;{get;~serial}/ {get;positionN}{return}}
+    {if;{get;editPositionN};==;-1;
+      {embed;{embedbuild;
+        title:No Record Found;
+        description:```{get;~serial}```;
+        footer.text:For Detailed Help Type ➜ {get;prefix} -e;
+        footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+        color:red;
+      }}
+      {return}
+      {//; checkpoint1
+      Result  N- {get;~n} C- {get;~c} M- {get;~m} ON- {get;~serial} SL- {get;~sl} SRV- {get;~s}
+      {return}
+      }
+    ;
+    {switch;{length;{get;arg}}
+      ;0;
+        {func.dbEditHelp}
+      ;1;{//;setting new nick}
+      {set;~c;{get;@{userid}chids;{get;editPositionN}}}
+      {set;~m;{get;@{userid}msgids;{get;editPositionN}}}
+      {set;~s;{get;@{userid}srvids;{get;editPositionN}}}
+      {set;~sl;{get;@{userid}slNo;{get;editPositionN}}}
+        {set;~n;{shift;{get;arg}}}
+      ;2;{//;setting new chid, msgid}
+      {set;~s;{get;@{userid}srvids;{get;editPositionN}}}
+      {set;~sl;{get;@{userid}slNo;{get;editPositionN}}}
+      {set;~n;{get;@{userid}nicks;{get;editeditPositionN}}}
+        {set;~c;{shift;{get;arg}}}
+        {set;~m;{shift;{get;arg}}}
+      ;3;{//;setting new chid, msgid, nick}
+      {set;~s;{get;@{userid}srvids;{get;editPositionN}}}
+      {set;~sl;{get;@{userid}slNo;{get;editPositionN}}}
+        {set;~c;{shift;{get;arg}}}
+        {set;~m;{shift;{get;arg}}}
+        {set;~n;{shift;{get;arg}}}
+      ;
+        {func.dbEditHelp}
+      }
+    }
+    {if;{get;~c};startswith;<#;
+      {set;~temp;{substring;{get;~c};2;{math;-;{length;{substring;{get;~c};1}}}}}
+    ;
+      {set;temp;{get;~c}}
+    }
+    {if;{length;{get;temp}};!=;18;
+      {embed;{embedbuild;
+        title:Wrong Channel ID;
+        description:```{get;temp}```;
+        color:red;
+      }}
+      {return}
+    }
+    {if;{length;{get;~m}};!=;18;
+      {embed;{embedbuild;
+        title:Wrong Message ID;
+        description:```{get;~m}```;
+        fields.name:Command Syntax;
+        fields.value:
+        ➜ {get;prefix} <-e> <SlNo> <newNickname>
+        ➜ {get;prefix} <-e> <SlNo> <newChannelMention> <newMessageID>
+        ➜ {get;prefix} <-e> <SlNo> <newChannelMention> <newMessageID> <newNickname>;
+        color:red;
+      }}
+      {return}
+    }
+    {//;checkpoint2
+    Result editPos- {get;editPositionN}  SlNo- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}  ARG- {get;arg}
+    {return}
+    }
+  }
+
+  {//;cheking non flag inputs}
+  {if;{flag;_};==;;
+    {if;{flagset;r};
+      {if;{flag;r};==;;
+        {if;{argslength};==;1;
+          {set;flagRHelpTitle;HOW TO ADD COMMENT WHILE QUOTING}
+          {func.flagRHelp}
+        }
+      }
+    }
+  ;
+    {if;{flagset;r};
+      {if;{flag;r};==;;
+        {set;flagRHelpTitle;FLAG "-r" CAN'T BE BLANK}
+        {func.flagRHelp}
+      }
+    ;
+      {set;~r;{split;{flag;r};{space}}}
+    }
+    {set;arg;{split;{flag;_};{space}}}
+    {set;arg0;{shift;{get;arg}}}      {//;checking if arg0 is a valid nickname}
+    {set;~temp;{substring;{get;arg0};2;{math;-;{length;{substring;{get;arg0};1}}}}}
+    {if;{get;arg0};startswith;<#;
+      {set;arg0;{get;~temp}}
+    }
+
+    {set;positionN;{indexof;{get;@{userid}nicks};{get;arg0}}}
+    {if;{get;positionN};!=;-1;                             {//;arg0 is a valid nickname}
+      {set;~c;{get;@{userid}chids;{get;positionN}}}
+      {set;~m;{get;@{userid}msgids;{get;positionN}}}
+      {if;{length;{get;arg}};!=;0;
+        {set;~r;{get;arg}}
+      }
+    ;
+      {if;{length;{get;arg0}};!=;18;                      {//;arg0 is not a valid nickname checking if its a vaild msg id}
+        {set;arglen;{length;{get;arg0}}}
+        {embed;{embedbuild;
+          title:Wrong Input;
+          description:```{get;arg0}```;
+          fields.name: Probable Mistakes;
+          fields.value:
+          ✦ This is Not a vaild Channel ID
+          ✦ This is Not a vaild Message ID
+          ✦ This is Not a vaild Nickname
+          {if;{get;arglen};!=;18;✦ Length of the ID must be 18.};
+          {//;if;{get;positionN};!=;-1;✦ This Nickname is Not saved for {guildname}}
+          {//;✦ You haven't used #channelMention to indicate Channel.}
+          color:red;
+        }}
+        {return}
+      ;
+        {set;messageCheck;{messagetext;{get;arg0}}}        {//;checking if arg0 is a valid msg id}
+        {if;{get;messageCheck};==;`No message found`;      {//;arg0 is not a nick or valid msg id}
+          {if;{length;{get;arg}};==;0; {//;error nick not found, msg not found in current channel}
+            {set;channelCheck;{channelname;{get;arg0}}}
+            {embed;{embedbuild;
+              title:Wrong Input;
+              description:```{get;arg0}```;
+              fields.name: Probable Mistakes;
+              fields.value:
+              {if;{get;channelCheck};!=;`No channel found`;✦ You have only entered channel id of <#{get;arg0}>}
+              ✦ You haven't used a vaild Nickname.
+              ✦ You haven't used a vaild Message ID.
+              ✦ The message is not in <#{channelid}>
+              ✦ The message you are quoting, is deleted.;
+              color:red;
+            }}
+            {return}
+          ;
+            {set;arg1;{shift;{get;arg}}}                    {//;arg0 is also not a valid msg id. checking if arg0 is a valid channel id}
+            {if;{length;{get;arg1}};!=;18;{set;channelCheck;{channelname;{get;arg0}}}
+            {if;{get;channelCheck};!=;`No channel found`;
+              {embed;{embedbuild;
+                title:Wrong Input;
+                description:```{get;arg0}```;
+                fields.name: Probable Mistakes;
+                fields.value:
+                ✦ You haven't entered a vaild Nickname.
+                ✦ Length of Message ID `{get;arg0}` is not 18.;
+                color:red;
+              }}
+              {return}
+            ;
+              {embed;{embedbuild;
+                title:Wrong Input;
+                description:```{get;arg0}```;
+                fields.name: Probable Mistakes;
+                fields.value:
+                ✦ You haven't used a vaild Nickname.
+                ✦ You haven't used a vaild Message ID.
+                ✦ `{get;arg0}` is not a valid channel.;
+                color:red;
+              }}
+              {return}
+              {//;error nick not found ,msg not found in current channel and {get;arg1} length is not 18 so didnt check if {get;arg0} is a valid channel or not}
+            }
+          ;
+            {set;channelCheck;{channelname;{get;arg0}}}     {//;checking if arg0 is a valid channel id}
+            {if;{get;channelCheck};==;`No channel found`;   {//;arg0 is not a valid ch id}
+              {embed;{embedbuild;
+                title:Wrong Input;
+                description:```{get;arg0}```;
+                fields.name: Probable Mistakes;
+                fields.value:
+                ✦ You haven't used a vaild Nickname.
+                ✦ You haven't used a vaild Message ID.
+                ✦ `{get;arg0}` is not a valid channel.;
+                color:red;
+              }}
+              {return} {//;error {get;arg0} is not a nick not a msg not a channel}
+            ;
+              {if;{messagetext;{get;arg0};{get;arg1}};!=;`No message found`;    {//;msg {get;arg1}found in <#{get;arg0}>}
+                {set;~c;{get;arg0}}
+                {set;~m;{get;arg1}}
+                {if;{length;{get;arg}};!=;0;{set;~r;{get;arg}}}
+              ;
+                {embed;{embedbuild;     {//;msg id is wrong or msg is deleted from <#{get;arg0}>}
+                  title:Wrong Input;
+                  description:```{get;arg0}```;
+                  fields.name: Probable Mistakes;
+                  fields.value:
+                  ✦ You haven't used a vaild Nickname.
+                  ✦ You haven't used a vaild Message ID.
+                  ✦ You have used wrong #channelMention.
+                  ✦ The message is not in <#{get;arg0}>
+                  ✦ The message you are quoting, is deleted from <#{get;arg0}>;
+                  color:red;
+                }}
+                {return}
+              }
+            }
+          }
+        }
+        ;
+          {set;~c;{channelid}}
+          {set;~m;{get;arg0}}
+          {if;{length;{get;arg}};!=;0;{set;~r;{get;arg}}}
+        }
+      }
+    }
+
+
+
+    {//;checkpoint3
+    last C- {get;~c} M- {get;~m} N- {get;~n} R- {get;~r}
+    Result pos- {get;positionN}  oN- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}  ARG- {get;arg}
+
+    arg0 {get;arg0} r {get;arg} p {get;positionN}
+    {return}
+    }
+
+    {//;switch;{length;{get;arg}} {//;this is old parsing logic}
+      ;1;
+        {set;positionN;{indexof;{get;@{userid}nicks};{get;arg;0}}}
+        {if;{get;positionN};==;-1;
+          {set;~c;{channelid}}
+          {set;~m;{shift;{get;arg}}}
+        ;
+          {set;~c;{get;@{userid}chids;{get;positionN}}}
+          {set;~m;{get;@{userid}msgids;{get;positionN}}}
+        }
+      ;2;
+        {set;arg0;{shift;{get;arg}}}
+        {set;arg;{join;{get;arg};{space}}}
+        {set;positionN;{indexof;{get;@{userid}nicks};{get;arg0}}}
+        {if;{get;positionN};==;-1;
+          {if;{length;{get;arg}};==;18;
+            {set;~c;{get;arg0}}
+            {set;~m;{get;arg}}
+          ;
+            {set;~c;{channelid}}
+            {set;~m;{get;arg0}}
+            {set;~r;{get;arg}}
+          }
+        ;
+          {set;~c;{get;@{userid}chids;{get;positionN}}}
+          {set;~m;{get;@{userid}msgids;{get;positionN}}}
+          {set;~r;{get;arg}}
+        }
+      ;
+        {set;arg0;{shift;{get;arg}}}
+        {set;positionN;{indexof;{get;@{userid}nicks};{get;arg0}}}
+        {if;{get;positionN};==;-1;
+          {set;~c;{get;arg0}}
+          {set;~m;{shift;{get;arg}}}
+          {set;~r;{get;arg}}
+        ;
+          {set;~c;{get;@{userid}chids;{get;positionN}}}
+          {set;~m;{get;@{userid}msgids;{get;positionN}}}
+          {set;~r;{get;arg}}
+        }
+      }
+  }
+
+ {//;
+  checkpoint4
+  last C- {get;~c} M- {get;~m} N- {get;~n} R- {get;~r}
+  Result pos- {get;positionN}  oN- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}  ARG- {get;arg}
+
+  arg0 {get;arg0} r {get;arg} p {get;positionN}
+  {return}
+  }
+
+  {//;
+  -----------------------------
+  CHECKING IF THE INPUTS R IN CORRECT FORMAT
+  -----------------------------
+  }
+
+{//;checking if channel id is valid & msg id is not a chnnel id}
+{set;~temp;{substring;{get;~c};2;{math;-;{length;{substring;{get;~c};1}}}}}
+{set;channelTest;{channelname;{get;~c}}}
+{set;positionN;{indexof;{get;@{userid}nicks};{get;arg;0}}}
+{if;{get;flagused};!=;e;
+  {if;{get;channelTest};==;`No channel found`;
+    {embed;{embedbuild;
+      title:Not a Valid Channel of {guildname};
+      fields.name:Channel ID;
+      fields.value:```{get;~c}```{//;if;{get;~c};startswith;<#;<#{get;~c}>;```{get;~c}```};
+      fields.inline:true;
+      fields.name:Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      fields.name:Valid for Guile ID;
+      fields.value:```{get;@{userid}srvids;{get;positionN}}```;
+      fields.name:Reason;
+      fields.value:
+  ➜ You are Quoting a Message of a different Guild.
+  {//;➜ Wrong Channel ID stored in Nickname.};
+      color:red;
+      footer.text:{get;prefix} <-s> [#channelMention] <messageId> <nickName>;
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+    }}
+    {return}
+  }
+  {set;channelTest;{channelname;{get;~n}}}
+  {if;{get;channelTest};!=;`No channel found`;
+    {embed;{embedbuild;
+      title:Nickname can't be Channel Mention;
+      description:Command Syntax
+      ```{get;prefix} <-s> [#channelMention] <messageId> <nickName>```
+      **Your Input**;
+      fields.name:Channel ID;
+      fields.value:{get;~c};
+      fields.inline:true;
+      fields.name:Message ID;
+      fields.value:{get;~m};
+      fields.inline:true;
+      fields.name:Nickname;
+      fields.value:{get;~n};
+      fields.inline:true;
+      footer.text:For Detailed Help Type ➜ {get;prefix} -e;
+      footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+    }}
+    {return}
+  }
+}
+
+  {//;starting next check}
+  {if;{get;~c};startswith;<#;
+    {set;~c;{get;~temp}}
+  ;
+     {//;if;{get;@{userid}nicks;{get;positionN}};!=;`Index out of range`;
+      {if;{flagset;e};
+        {embed;{embedbuild;
+          title:This Nickname is Not Stored in Database;
+          description:```{get;~serial}```;
+          color:red;
+        }}
+        {return}
+      }
+    ;
+      {//;if;{get;@{userid}srvids;{get;positionN}};!=;{guildid};
+        {embed;{embedbuild;
+          title:THIS NICKNAME IS NOT SAVED FOR {guildname};
+          fields.name:Nickname;
+          fields.value:```{get;@{userid}nicks;{get;positionN}}```;
+          fields.name:ID of this Guild;
+          fields.value:```{guildid}```;
+          fields.inline:true;
+          fields.name: Valid for Guild ID;
+          fields.value:```{get;@{userid}srvids;{get;positionN}}```;
+          fields.inline:true;
+          thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+          footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+          footer.text:To view the list of Nicknames that works in {guildname}, type ➜ {get;prefix} -l;
+          color:red;
+        }}
+        {return}
+      }
+    }
+  }
+
+  {//;checking if user has typed only numbers & the length of the channel and message ids are 18}
+  {if;{parsefloat;{get;~c}};!=;{get;~c};
+    {set;directQuoteTitle;Only Digit or Channel Mention is Allowed as Channel ID!}
+    {set;directQuoteDesc;{zws}}
+    {void;{output;{embed;{func.directQuoteHelp}}}}
+  ;
+    {if;{length;{get;~c}};!=;18;
+      {if;{channelname;{get;~c}};==;`No channel found`;{set;~tempc;No Channel Found}}
+      {embed;{embedbuild;
+        title:ERRROR - Wrong Input;
+        fields.name:Channel;
+        fields.value:```{get;~tempc}```;
+        fields.inline:true;
+        fields.name:Length;
+        fields.value:```{length;{get;~c}}```;
+        fields.inline:true;
+        fields.name:Message ID;
+        fields.value:```{get;~m}```;
+        footer.text:For Detailed Help Type ➜ {get;prefix} -e;
+        footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+        thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+        color:red;
+      }}
+      {//;void;{output;{embed;{func.directQuoteHelp}}}}
+    }
+  }
+
+  {if;{parsefloat;{get;~m}};!=;{get;~m};
+    {set;arg;{split;{flag;s};{space}}}
+    {switch;{length;{get;arg}}
+      ;2;
+        {embed;{embedbuild;
+          title:Nickname Missing or Wrong Messaage ID!;
+          description:Command Syntax
+          ```{get;prefix} <-s> [#channelMention] <messageId> <nickName>```
+          **Your Input**;
+          fields.name:Channel ID;
+          fields.value:{get;~c};
+          fields.inline:true;
+          fields.name:Message ID;
+          fields.value:{get;~m};
+          fields.inline:true;
+          fields.name:Nickname;
+          fields.value:{get;~n};
+          fields.inline:true;
+          footer.text:For Detailed Help Type ➜ {get;prefix} -s;
+          footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+          thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+          color:red;
+        }}
+        {return}
+      ;3;
+        {embed;{embedbuild;
+          title:Invalid Message ID!;
+          description:{zws}{newline}Message ID Entered by You ```{get;~m}```;
+          color:red;
+        }}
+        {return}
+    }
+  ;
+    { if;{length;{get;~m}};!=;18;
+      {embed;{embedbuild;
+        title:MESSAGE ID LENGTH SHOULD BE 18!;
+        fields.name:Message ID;
+        fields.value:```{get;~m}```;
+        fields.inline:true;
+        fields.name:Length;
+        fields.value:```{length;{get;~m}}```;
+        fields.inline:true;
+        thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+        footer.text:{zws}{//;For Detailed Help Type ➜ {get;prefix} -s};
+        footer.icon_url:https://cdn.discordapp.com/attachments/480258285778370581/488354225454055454/emoji.png;
+        color:red;
+      }}
+      {//;void;{output;{embed;{func.directQuoteHelp}}}}
+    }
+  }
+
+  {//;
+  -----------------------------
+  PUSHING THE INPUTS IN DATABASE IF FLAG s IS USED
+  -----------------------------
+  }
+  {//;
+  checkpoint5
+  Result pos- {get;positionN}  oN- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}  ARG- {get;arg}
+  {return}
+  }
+
+  {if;{flagset;s};
+    {set;positionN;{indexof;{get;@{userid}nicks};{get;~n}}}
+    {set;~s;{guildid}}
+    {if;{get;positionN};==;-1;
+      {set;@{userid}slCounter;{math;+;{get;@{userid}slCounter};1}}
+      {set;~sl;{get;@{userid}slCounter}}
+      {push;{get;@{userid}chids};{get;~c}}
+      {push;{get;@{userid}msgids};{get;~m}}
+      {push;{get;@{userid}nicks};{get;~n}}
+      {push;{get;@{userid}srvids};{get;~s}}
+      {push;{get;@{userid}slNo};{get;@{userid}slCounter}}
+      {set;~dbStatusTitle;Message Link Saved}
+      {set;~dbStatusColor;00FF00}
+      {set;~dbStausThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702913522237441/154183016898369210.png}
+      {void;{output;{embed;{func.dbStatus}}}}
+    ;
+      {set;~length;{length;{get;@{userid}nicks}}}
+      {for;~number;0;<;{get;~length};
+        {if;{guildid};==;{get;@{userid}srvids;{get;~number}};
+          {if;{get;~n};==;{get;@{userid}nicks;{get;~number}};
+            {set;~sl;{get;@{userid}slNo;{get;~number}}}
+            {set;~n;{get;@{userid}nicks;{get;~number}}}
+            {set;~c;{get;@{userid}chids;{get;~number}}}
+            {set;~m;{get;@{userid}msgids;{get;~number}}}
+            {set;~s;{get;@{userid}srvids;{get;~number}}}
+            {set;~dbStatusTitle;This Nickname is Already Taken for {guildname}}
+            {set;~dbStatusColor;red}
+            {set;~dbStausThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png}
+            {void;{output;{embed;{func.dbStatus}}}}
+          }
+        }
+    }
+    {set;@{userid}slCounter;{math;+;{get;@{userid}slCounter};1}}
+    {set;~sl;{get;@{userid}slCounter}}
+    {push;{get;@{userid}chids};{get;~c}}
+    {push;{get;@{userid}msgids};{get;~m}}
+    {push;{get;@{userid}nicks};{get;~n}}
+    {push;{get;@{userid}slNo};{get;@{userid}slCounter}}
+    {push;{get;@{userid}srvids};{get;~s}}
+    {set;~dbStatusTitle;Message Link Saved in Database for {guildname}}
+    {set;~dbStatusColor;00FF00}
+    {set;~dbStausThumbnail;https://cdn.discordapp.com/attachments/480258285778370581/510702913522237441/154183016898369210.png}
+    {void;{output;{embed;{func.dbStatus}}}}
+    }
+  }
+
+  {//;
+  -----------------------------
+  EDITING THE DATABASE MSG LINKS IF FLAG e IS USED
+  -----------------------------
+  }
+  {if;{flagset;e};
+  {//;
+  checkpoint6
+  Result pos- {get;editPositionN}  oN- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}
+  {return}
+  }
+  {if;{isarray;{get;~n}};==;true;
+    {set;~n;{join;{get;~n;{space}}}}
+  }
+    {if;{length;{flag;e}};!=;2;
+      {if;{messagetext;{get;~c};{get;~m}};==;`No message found`;
+        {embed;{embedbuild;
+          title:Unable to Update;
+          fields.name:Stored Channel ID;
+          fields.value:```{get;~c}```;
+          fields.inline:true;
+          fields.name:Stored Message ID;
+          fields.value:```{get;~m}```;
+          fields.inline:true;
+          fields.name:Reason;
+          fields.value:
+          **Record No. {get;~sl}** is created for **Guild ID {get;~s}** & it can only hold Message Link of  that Guild.
+          `Current Guild ID: {guildid}`;
+          fields.name:Solutions;
+          fields.value:
+          ➜ Save a Message ID of {guildname}.
+          ➜ Only change the Nickname.
+          ➜ Delete {get;~sl} by typing `{get;prefix} -d {get;~slNo}`.
+          ➜ Go to **Guild ID {get;~s}** & save a Message Link of that Guild.;
+          thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+          color:red;
+        }}
+        {return}
+      }
+    }
+    {set;~oc;{splice;{get;@{userid}chids};{get;editPositionN};1;{get;~c}}}
+    {set;~om;{splice;{get;@{userid}msgids};{get;editPositionN};1;{get;~m}}}
+    {set;~os;{splice;{get;@{userid}srvids};{get;editPositionN};1;{get;~s}}}
+    {set;~on;{splice;{get;@{userid}nicks};{get;editPositionN};1;{get;~n}}}
+    {set;~osl;{splice;{get;@{userid}slNo};{get;editPositionN};1;{get;~sl}}}
+    {//;set;tempSlNo;[]}
+    {//;set;tempCounter;0}
+    {//;foreach;element;{get;tempNicks};
+      {set;tempCounter;{math;+;{get;tempCounter};1}}
+      {set;@{userid}slNo;{get;tempSlNo}}
+    }
+    {//;set;~sl;{get;tempSlNo}}
+    {embed;{embedbuild;
+      title:Successfully Updated Record;
+      fields.name:Record No.;
+      fields.value:```{join;{get;~osl};{space}}```;
+      fields.name:Previous Nickname;
+      fields.value:```{join;{get;~on};{space}}```;
+      fields.inline:true;
+      fields.name:Updated Nickname;
+      fields.value:```{get;~n}```;
+      fields.inline:true;
+      fields.name:Previous Guild ID;
+      fields.value:```{join;{get;~os};{space}}```;
+      fields.inline:true;
+      fields.name:Updated Guild ID;
+      fields.value:```{get;~s}```;
+      fields.inline:true;
+      fields.name:Previous Channel ID;
+      fields.value:```{join;{get;~oc};{space}}```;
+      fields.inline:true;
+      fields.name:Updated Channel ID;
+      fields.value:```{get;~c}```;
+      fields.inline:true;
+      fields.name:Previous Message ID;
+      fields.value:```{join;{get;~om};{space}}```;
+      fields.inline:true;
+      fields.name:Updated Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      footer.text:Saved Message IDs ➜ Total: {length;{get;@{userid}srvids}}  ◈  For {guildname}: {get;count};
+      color:00FF00;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702913522237441/154183016898369210.png;
+    }}
+    {return}
+  }
+
+
+  {//;
+  -----------------------------
+  FETCHING THE QUOTE MSG
+  ----------------------------
+  }
+  {set;~user;{messagesender;{get;~c};{get;~m}}}
+  {if;{channelname;{get;~c}};==;`No channel found`;
+    {set;~tempc;No Channel Found}
+  }
+  {if;{get;~user};==;`No channel found`;
+    {embed;{embedbuild;
+      title:Invalid Channel ID;
+      fields.name:Channel;
+      fields.value:```{get;~tempc}```;
+      fields.inline:true;
+      fields.name:Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+    }}
+    {return}
+  }
+  {if;{get;~user};==;`No message found`;
+    {if;{get;@{userid}nicks;{get;positionN}};!=;`Index out of range`;
+      {embed;{embedbuild;
+        title:DEFECTIVE NICKNAME;
+        fields.name:Nickname;
+        fields.value:```{get;@{userid}nicks;{get;positionN}}```;
+        fields.name:Message ID;
+        fields.value:```{get;~m}```;
+        fields.inline:true;
+        fields.name:Channel;
+        fields.value:```{channelname;{get;~c}}```;
+        fields.inline:true;
+        fields.name:{zws}{newline}Possible Reasons;
+        fields.value:
+        ✦ The Stored Message ID is not valid.
+        ✦ The Message is not in <#{get;~c}>
+        ✦ The Original Message is Deleted.;
+        thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+        color:red;
+      }}
+      {return}
+      {//;void;{output;{embed;{func.directQuoteHelp}}}}
+    }
+    {embed;{embedbuild;
+      title:MESSAGE NOT FOUND;
+      fields.name:Message ID;
+      fields.value:```{get;~m}```;
+      fields.inline:true;
+      fields.name:Channel;
+      fields.value:```{channelname;{get;~c}}```;
+      fields.inline:true;
+      fields.name:{zws}{newline}Possible Reasons;
+      fields.value:
+      ✦ The Message ID is not valid.
+      ✦ The Message is not in <#{get;~c}>
+      ✦ The Message you are quoting, is Deleted.
+      ✦ You have misspelled the Nickname.
+      ✦ This Nickname is not saved for {guildname};
+      thumbnail.url:https://cdn.discordapp.com/attachments/480258285778370581/510702728352366592/p-replace-color.png;
+      color:red;
+    }}
+    {//;void;{output;{embed;{func.directQuoteHelp}}}}
+  }
+  {if;{logic;&&;{isnsfw;{get;~c}};{logic;!;{isnsfw}}};
+    {embed;{embedbuild;
+      title:Please use a nsfw channel!;
+      color:red;
+    }}
+    {return}
+  }
+  {set;~eColor;[]}
+  {set;~roles;{roles;{get;~user}}}
+  {foreach;~color;{get;~roles};
+    {if;{rolecolor;{get;~color}};!=;000000;
+      {push;{get;~eColor};{rolecolor;{get;~color}}}
+    }
+  }
+  {if;{length;{get;~eColor}};==;0;
+    {set;~eColor;pink}
+  }
+  {set;~msg;{regexreplace;{messagetext;{get;~c};{get;~m}};/(\[.+?\])(\(.+?\))/g;$1{zws}$2}}
+  {if;{get;~msg};==;;
+    {func.quoteEmbed}
+    {return}
+  }
+  {set;~url;https://discordapp.com/channels/}
+  {set;~image;{shift;{messageattachments;{get;~c};{get;~m}}}}
+  {//;if;{length;{get;~r}};!=;0;     {//;disabled as comment is now shown inside embed for quoting non embeded msgs}
+    **Comment of {username}#{userdiscrim}** - {join;{get;~r};{space}}
+  }
+
+  {//;
+  checkpoint7
+  Result pos- {get;positionN}  oN- {get;~serial}  N- {get;~n} C- {get;~c} M- {get;~m}  SL- {get;~sl} SRV- {get;~s}  ARG- {get;arg}
+  }
+
+  {set;~tempR;{get;~r}}
+  {if;{length;{get;~tempR}};!=;0;
+    {set;mentions;[]}
+    {foreach;element;{get;~tempR};
+      {if;{substring;{get;element};0;2};==;<@;
+        {if;{substring;{get;element};2;3};==;&;
+          {set;roleid;{substring;{get;element};3;{math;-;{length;{get;element}};1}}}
+          {push;mentions;{get;element}}
+        ;
+          {set;userid;{substring;{get;element};2;{math;-;{length;{get;element}};1}}}
+          {push;mentions;{get;element}}
+        }
+      }
+    }
+    {join;{get;mentions};{space}}
+  }
+  {if;{isarray;{get;~r}};==;true;
+    {set;~r;{join;{get;~r};{space}}}
+  }
+  {embed;{embedbuild;
+    author.name: QUOTE FROM {upper;{usernick;{get;~user}}};
+    thumbnail.url:{useravatar;{get;~user}};
+    footer.text:Original Message sent on;
+    footer.icon_url:{useravatar;{get;~user}};
+    description:{if;{get;~msg};!=;;❝ {get;~msg} ❞} {if;{messageedittime;{get;~c};{get;~m}};!=;Invalid date;(edited)}
+    [**Quote Link**]({get;~url}{guildid}/{get;~c}/{get;~m});
+    fields.name:{if;{get;~r};==;;QUOTED BY;COMMENT FROM {upper;{usernick}}};
+    fields.value:{if;{get;~r};==;;{usernick};{get;~r}};
+    timestamp:{messagetime;{get;~c};{get;~m};YYYY-MM-DDTHH:mm:ssZ};
+    color:{get;~eColor;0};
+  }}
