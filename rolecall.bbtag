@@ -1,0 +1,12 @@
+The member(s) under {args} are:
+{
+  set;~array;{rolemembers;{args}}
+}
+{embed;
+  {buildembed;
+    footer.text: Coded by - EP#7262;
+    title: Role Call "{args}";
+    description: Total {length;{get;~array}} members in this Role!{newline}
+{foreach;~element;~array;{usermention;{get;~element}}:Joined this server {userjoinedat;DD MMM YYYY;{get;~element}}{newline}};
+  }
+}
