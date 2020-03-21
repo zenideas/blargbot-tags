@@ -9,7 +9,7 @@ CREATING FUNCTIONS FOR CALLING HELPS
 {//;function to show available cmds}
 {func;help;
   {embed;{buildembed;
-    title:CURRENTLY AVAILABLE CUSTOM CMDS;
+    title:CURRENTLY AVAILABLE SIDEKICK CMDS;
     description:
     ✦ {get;prefix} [permissions | perms | p] ➜ `permissions required`
     ✦ {get;prefix} [lootcap | lc] ➜ `lootcap`
@@ -99,26 +99,17 @@ Supercell only provides info about what are left to upgrade for heroes, troops a
     description:
 **Sidekick Posts 2 types of feeds.**{newline}{zws}
 **1. War Feed** - Posts war attacks.
-**2. Clan Feed** - Posts troops & heroes upgrades and member join/leave info.
+**2. Clan Feed** - Posts upgrades of troops & heroes and member join/leave info.
 
-To set up feeds correctly, follow the steps below;
-    fields.name:Step 1 - Link Feed Channels to Sidekick;
-    fields.value:
-**/channel #channelName #clanTag**
-Example -
-/channel <#380240940750864384> #Y9LLC99R
-/channel <#380240996300226570> #Y9LLC99R;
-    fields.name:Step 2 - Mark Clan Feed Channel;
-    fields.value:
-**/channel #channelName feed**
-Example -
-/channel <#380240940750864384> feed;
-    fields.name:Step 3 - Mark War Feed Channel;
-    fields.value:
-**/channel #channelName war**
-Example -/channel <#380240996300226570> war;
-    fields.name:Note;
-    fields.value:
+> Firstly, get your clan tag (eg. #gy2qql)
+> Now, go to two channels you plan on making them war and clan feeds.
+> 1. At clan feed
+```
+/channel #gy2qql feed```
+> 2. At war feed
+```
+ /channel #gy2qql war```
+
 ❃ To get war feeds War Log must be set to `Public`
 ❃ You can toggle clan/war feed posting
 ```
